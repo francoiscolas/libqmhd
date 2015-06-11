@@ -130,13 +130,17 @@ void QMHDRoute::setPath(const QString& path)
 
     d->path = path;
     d->pathKeys.clear();
-    if ((matchIt = QRegularExpression(":(\\w+)").globalMatch(path)).hasNext()) {
+    if ((matchIt = QRegularExpression(":(\\w+)(\\(.*\\))?").globalMatch(path)).hasNext()) {
         while (matchIt.hasNext()) {
             QRegularExpressionMatch match = matchIt.next();
+            QString                 c     = match.captured(0);
+            QString                 k     = match.captured(1);
+            QString                 p     = match.captured(2);
 
-            d->pathKeys.append(match.captured(1));
-            pattern.replace(match.captured(0), "([a-zA-Z0-9-$_.+!*'(),%]+)");
-            // => According to RFC-1738 (http://www.rfc-editor.org/rfc/rfc1738.txt).
+            if (p.isEmpty())
+                p = "([a-zA-Z0-9-$_.+!*'(),%]+)"; // According to RFC-1738 (http://www.rfc-editor.org/rfc/rfc1738.txt).
+            pattern.replace(c, p);
+            d->pathKeys.append(k);
         }
         d->pathRe.setPattern(pattern);
     } else {
