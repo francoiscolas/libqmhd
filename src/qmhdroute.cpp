@@ -125,7 +125,7 @@ const QString& QMHDRoute::path() const
 
 void QMHDRoute::setPath(const QString& path)
 {
-    QString                         pattern(path);
+    QString                         pattern("^" + path + "$");
     QRegularExpressionMatchIterator matchIt;
 
     d->path = path;
