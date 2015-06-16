@@ -49,6 +49,7 @@ enum class QMHDMethod
 };
 
 QMHDMethod qmhd_method_from_string(const char* method);
+const char* qmhd_method_to_string(QMHDMethod method);
 
 enum class QMHDHttpVersion
 {

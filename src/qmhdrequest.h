@@ -23,6 +23,7 @@ class QMHDRequest : public QObject
 
     public:
         QMHDMethod method() const;
+        QString methodString() const;
         const QString& path() const;
         const QStringHash& query() const;
         QMHDHttpVersion httpVersion() const;

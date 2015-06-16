@@ -7,6 +7,8 @@ static const char* s_method_strings[] = {
     0
 };
 
+static int s_method_count = sizeof(s_method_strings) / sizeof(*s_method_strings);
+
 QMHDMethod qmhd_method_from_string(const char* method)
 {
     for (int i = 0; s_method_strings[i] != 0; ++i) {
@@ -14,6 +16,15 @@ QMHDMethod qmhd_method_from_string(const char* method)
             return (QMHDMethod) i;
     }
     return QMHDMethod::Unknown;
+}
+
+const char* qmhd_method_to_string(QMHDMethod method)
+{
+    int m = (int) method;
+
+    if (m >= 0 && m < s_method_count)
+        return s_method_strings[m];
+    return NULL;
 }
 
 QMHDHttpVersion qmhd_http_version_from_string(const char* http_version)

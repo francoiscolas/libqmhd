@@ -121,6 +121,11 @@ void QMHDRouter::processRequest(QMHDRequest* request)
         request->response()->setStatus(QMHDHttpStatus::NotFound);
         request->response()->send();
     }
+    qDebug("%s %s (found=%d processed=%d)",
+           qmhd_method_to_string(request->method()),
+           qPrintable(request->path()),
+           found,
+           processed);
 }
 
 void QMHDRouter::addRoute(const QString& method, const QString& path, QObject* receiver, const char* slot)

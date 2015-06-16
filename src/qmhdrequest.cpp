@@ -119,6 +119,11 @@ QMHDMethod QMHDRequest::method() const
     return d->method;
 }
 
+QString QMHDRequest::methodString() const
+{
+    return qmhd_method_to_string(d->method);
+}
+
 const QString& QMHDRequest::path() const
 {
     return d->path;
