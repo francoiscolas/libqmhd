@@ -1,8 +1,22 @@
 #include "qmhdresponse.h"
 
 #include <QJsonDocument>
+#include <QRegularExpression>
 
 #include <microhttpd.h>
+
+static QString to_header_case(const QString& headerName)
+{
+    QString result(headerName.toLower());
+    QRegularExpression re("(?:^|-|\\s)([a-z])");
+    QRegularExpressionMatchIterator it(re.globalMatch(result));
+
+    while (it.hasNext()) {
+        QRegularExpressionMatch match = it.next();
+        result.replace(match.capturedStart(1), 1, match.captured(1).toUpper());
+    }
+    return result;
+}
 
 class QMHDResponsePrivate
 {
@@ -74,7 +88,7 @@ void QMHDResponse::send()
         }
 
         for (auto it = d->headers.begin(); it != d->headers.end(); ++it) {
-            MHD_add_response_header(response, qPrintable(it.key()), qPrintable(it.value()));
+            MHD_add_response_header(response, qPrintable(to_header_case(it.key())), qPrintable(it.value()));
         }
 
         MHD_queue_response(d->mhdConnection, (quint32) d->status, response);
