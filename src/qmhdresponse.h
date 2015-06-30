@@ -26,6 +26,7 @@ class QMHDResponse : public QObject
         void send(const QByteArray& buffer);
         void send(const QJsonDocument& json);
         void send(int fileDescriptor, size_t fileSize);
+        void send(int fileDescriptor, off_t fileOffset, size_t fileSize);
         void send();
 
         QMHDHttpStatus status() const;

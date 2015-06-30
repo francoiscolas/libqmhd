@@ -29,6 +29,7 @@ class QMHDResponsePrivate
         QStringHash headers;
         QByteArray body;
         int bodyFileDescriptor;
+        off_t bodyFileOffset;
         size_t bodyFileSize;
         bool sent;
 };
@@ -37,6 +38,7 @@ QMHDResponsePrivate::QMHDResponsePrivate()
     : mhdConnection(NULL),
       status(QMHDHttpStatus::Ok),
       bodyFileDescriptor(-1),
+      bodyFileOffset(0),
       bodyFileSize(0),
       sent(false)
 {
@@ -76,13 +78,23 @@ void QMHDResponse::send(int fileDescriptor, size_t fileSize)
     }
 }
 
+void QMHDResponse::send(int fileDescriptor, off_t fileOffset, size_t fileSize)
+{
+    if (d->sent == false) {
+        d->bodyFileDescriptor = fileDescriptor;
+        d->bodyFileOffset = fileOffset;
+        d->bodyFileSize = fileSize;
+        send();
+    }
+}
+
 void QMHDResponse::send()
 {
     MHD_Response* response;
 
     if (d->sent == false) {
         if (d->bodyFileDescriptor >= 0) {
-            response = MHD_create_response_from_fd(d->bodyFileSize, d->bodyFileDescriptor);
+            response = MHD_create_response_from_fd_at_offset(d->bodyFileSize, d->bodyFileDescriptor, d->bodyFileOffset);
         } else {
             response = MHD_create_response_from_buffer(d->body.size(), (void*) d->body.constData(), MHD_RESPMEM_PERSISTENT);
         }
