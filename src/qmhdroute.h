@@ -28,11 +28,11 @@ class QMHDRoute
         const QString& path() const;
         void setPath(const QString& path);
 
-        QObject* receiver() const;
         const QMetaObject* controller() const;
+        void setController(const QMetaObject* controller);
+
         const QString& action() const;
-        void setAction(QObject* receiver, const QString& action);
-        void setAction(const QMetaObject* controller, const QString& action);
+        void setAction(const QString& action);
 
     public:
         QMHDRoutePrivate* const d;

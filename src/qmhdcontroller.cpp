@@ -4,6 +4,7 @@
 
 #include "qmhdbody.h"
 #include "qmhdrequest.h"
+#include "qmhdresponse.h"
 
 class QMHDControllerPrivate
 {

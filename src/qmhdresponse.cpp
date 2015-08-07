@@ -104,10 +104,11 @@ void QMHDResponse::send()
         }
 
         MHD_queue_response(d->mhdConnection, (quint32) d->status, response);
-        MHD_resume_connection(d->mhdConnection);
         MHD_destroy_response(response);
 
         d->sent = true;
+
+        emit sent();
     }
 }
 

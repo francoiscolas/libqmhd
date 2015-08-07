@@ -17,14 +17,12 @@ class QMHDRoutePrivate
         QString path;
         QStringList pathKeys;
         QRegularExpression pathRe;
-        QObject* receiver;
         const QMetaObject* controller;
         QString action;
 };
 
 QMHDRoutePrivate::QMHDRoutePrivate()
-    : receiver(NULL),
-      controller(NULL)
+    : controller(NULL)
 {
 }
 
@@ -39,7 +37,6 @@ QMHDRoutePrivate& QMHDRoutePrivate::operator=(const QMHDRoutePrivate& other)
     path = other.path;
     pathKeys = other.pathKeys;
     pathRe = other.pathRe;
-    receiver = other.receiver;
     controller = other.controller;
     action = other.action;
     return *this;
@@ -148,14 +145,14 @@ void QMHDRoute::setPath(const QString& path)
     }
 }
 
-QObject* QMHDRoute::receiver() const
-{
-    return d->receiver;
-}
-
 const QMetaObject* QMHDRoute::controller() const
 {
     return d->controller;
+}
+
+void QMHDRoute::setController(const QMetaObject* controller)
+{
+    d->controller = controller;
 }
 
 const QString& QMHDRoute::action() const
@@ -163,16 +160,7 @@ const QString& QMHDRoute::action() const
     return d->action;
 }
 
-void QMHDRoute::setAction(QObject* receiver, const QString& action)
+void QMHDRoute::setAction(const QString& action)
 {
-    d->receiver = receiver;
-    d->controller = NULL;
-    d->action = action;
-}
-
-void QMHDRoute::setAction(const QMetaObject* controller, const QString& action)
-{
-    d->receiver = NULL;
-    d->controller = controller;
     d->action = action;
 }

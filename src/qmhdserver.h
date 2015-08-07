@@ -21,6 +21,9 @@ class QMHDServer : public QObject
 
         quint16	port() const;
 
+        int threadPoolSize() const;
+        void setThreadPoolSize(int size);
+
     signals:
         void newRequest(QMHDRequest* request);
 

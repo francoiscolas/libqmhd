@@ -21,7 +21,7 @@ class QMHDController : public QObject
 {
     Q_OBJECT
 
-    friend class QMHDRouter;
+    friend class QMHDRouterPrivate;
 
     protected:
         QMHDController(QObject* parent = NULL);

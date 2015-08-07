@@ -3,21 +3,13 @@
 
 #include <qmhdcontroller.h>
 
-class Hello : public QObject
+class Hello : public QMHDController
 {
     Q_OBJECT
+    QMHDCONTROLLER(Hello)
 
     public slots:
-        void hello(QMHDRequest* request);
-};
-
-class World : public QMHDController
-{
-    Q_OBJECT
-    QMHDCONTROLLER(World)
-
-    public slots:
-        void world();
+        void hello();
 };
 
 #endif // EXAMPLE_H

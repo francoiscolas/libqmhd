@@ -2,6 +2,7 @@
 
 #include <QThread>
 #include <QUrl>
+
 #include <microhttpd.h>
 
 #include "qmhdrequest.h"
@@ -24,6 +25,7 @@ class QMHDServerPrivate
     public:
         QMHDServer* const q;
         MHD_Daemon* mhdDaemon;
+        int threadPoolSize;
 };
 
 static int on_request_cb(void* dServerPtr,
@@ -43,7 +45,6 @@ static int on_request_cb(void* dServerPtr,
     } else if (*bodySize > 0) {
         return server->onRequestBody(request, body, bodySize);
     } else {
-        MHD_suspend_connection(mhdConnection);
         return server->onRequestDone(request);
     }
 }
@@ -55,7 +56,6 @@ static void on_response_sent_cb(void* /*dServerPtr*/,
 {
     QMHDRequest* request = static_cast<QMHDRequest*>(*requestPtr);
 
-    request->response()->sent();
     request->response()->deleteLater();
     request->deleteLater();
 }
@@ -71,7 +71,8 @@ static int header_values_iterator(void* qstringHashPtr,
 
 QMHDServerPrivate::QMHDServerPrivate(QMHDServer* q)
     : q(q),
-      mhdDaemon(NULL)
+      mhdDaemon(NULL),
+      threadPoolSize(QThread::idealThreadCount())
 {
 }
 
@@ -129,14 +130,15 @@ bool QMHDServer::listen(quint16 port)
 {
     if (d->mhdDaemon == NULL) {
         d->mhdDaemon = MHD_start_daemon(
-                           MHD_NO_FLAG
+                           MHD_USE_DEBUG
                            | MHD_USE_POLL_INTERNALLY
-                           | MHD_USE_PEDANTIC_CHECKS
-                           | MHD_USE_SUSPEND_RESUME,
+                           | MHD_USE_THREAD_PER_CONNECTION
+                           | MHD_USE_PEDANTIC_CHECKS,
                            port,
                            NULL, NULL,
                            &on_request_cb, d,
                            MHD_OPTION_NOTIFY_COMPLETED, &on_response_sent_cb, d,
+                           MHD_OPTION_THREAD_POOL_SIZE, d->threadPoolSize,
                            MHD_OPTION_END);
     }
     return isListening();
@@ -148,4 +150,15 @@ void QMHDServer::close()
         MHD_stop_daemon(d->mhdDaemon);
         d->mhdDaemon = NULL;
     }
+}
+
+int QMHDServer::threadPoolSize() const
+{
+    return d->threadPoolSize;
+}
+
+void QMHDServer::setThreadPoolSize(int size)
+{
+    if (!isListening())
+        d->threadPoolSize = size;
 }
