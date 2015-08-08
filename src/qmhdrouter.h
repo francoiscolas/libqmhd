@@ -5,6 +5,7 @@
 
 #include "qmhdroute.h"
 
+class QMHDController;
 class QMHDRequest;
 class QMHDRouterPrivate;
 
@@ -20,7 +21,7 @@ class QMHDRouter : public QObject
         void processRequest(QMHDRequest* request);
 
         void addRoute(const QString& method, const QString& path,
-                      const QMetaObject* controller, const QString& action);
+                      QMHDController* controller, const QString& action);
 
         const QList<QMHDRoute>& routes() const;
         void setRoutes(const QList<QMHDRoute>& routes);

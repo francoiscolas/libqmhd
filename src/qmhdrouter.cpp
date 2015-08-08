@@ -9,7 +9,7 @@
 #include "qmhdrequest.h"
 #include "qmhdresponse.h"
 
-static QList<QMHDMethod> methods_from_string(const QString& method)
+static QList<QMHDMethod> http_verbs_from_string(const QString& method)
 {
     QList<QMHDMethod> methods;
 
@@ -20,6 +20,11 @@ static QList<QMHDMethod> methods_from_string(const QString& method)
             methods.append(method);
     }
     return methods;
+}
+
+static QString name_from_slot(const QString& slot)
+{
+    return slot.left(slot.indexOf('(')).mid(1);
 }
 
 class QMHDRouterPrivate
@@ -34,15 +39,18 @@ class QMHDRouterPrivate
 
 void QMHDRouterPrivate::processAction(const QMHDRoute& route, QMHDRequest* request, const QHash<QString, QString>& params)
 {
-    QEventLoop eventLoop;
-    QTimer     timer;
-    QString    action = route.action();
-    QString    method = route.action() + "()";
+    QEventLoop      eventLoop;
+    QTimer          timer;
+    QMHDController* controller = route.controller();
+    QString         method     = route.action() + "()";
+    QString         action     = route.action();
 
-    if (route.controller() != NULL && route.controller()->indexOfMethod(qPrintable(method)) >= 0) {
+    if (controller != NULL && controller->metaObject()->indexOfMethod(qPrintable(method)) >= 0) {
         QMHDController* object;
 
-        object = static_cast<QMHDController*>(route.controller()->newInstance());
+        object = controller->clone();
+        if (object == NULL)
+            goto error;
         object->setParent(request);
         object->setRequest(request);
         object->setPathParams(params);
@@ -53,10 +61,12 @@ void QMHDRouterPrivate::processAction(const QMHDRoute& route, QMHDRequest* reque
         timer.setSingleShot(true);
         timer.start();
         eventLoop.exec();
-    } else {
-        request->response()->setStatus(QMHDHttpStatus::InternalServerError);
-        request->response()->send();
+        return ;
     }
+
+error:
+    request->response()->setStatus(QMHDHttpStatus::InternalServerError);
+    request->response()->send();
 }
 
 QMHDRouter::QMHDRouter(QObject* parent)
@@ -109,15 +119,15 @@ void QMHDRouter::processRequest(QMHDRequest* request)
 }
 
 void QMHDRouter::addRoute(const QString& method, const QString& path,
-                          const QMetaObject* controller, const QString& action)
+                          QMHDController* controller, const QString& action)
 {
     QWriteLocker locker(&d->lock);
     QMHDRoute    route;
 
-    route.setMethods(methods_from_string(method));
+    route.setHttpVerbs(http_verbs_from_string(method));
     route.setPath(path);
     route.setController(controller);
-    route.setAction(action);
+    route.setAction(name_from_slot(action));
     d->routes.append(route);
 }
 

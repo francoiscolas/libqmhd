@@ -3,9 +3,9 @@
 
 #include "qmhdglobal.h"
 
-class QMetaObject;
 class QObject;
 
+class QMHDController;
 class QMHDRoutePrivate;
 
 class QMHDRoute
@@ -19,17 +19,17 @@ class QMHDRoute
         QMHDRoute& operator=(const QMHDRoute& route);
 
     public:
-        bool match(const QString& path, QMHDMethod method, QHash<QString,QString>* params, bool* pathOk, bool* methodOk) const;
+        bool match(const QString& path, QMHDMethod verb, QHash<QString,QString>* params, bool* pathOk, bool* methodOk) const;
 
-        const QList<QMHDMethod>& methods() const;
-        void setMethod(QMHDMethod method);
-        void setMethods(const QList<QMHDMethod>& methods);
+        const QList<QMHDMethod>& httpVerbs() const;
+        void setHttpVerbs(QMHDMethod verb);
+        void setHttpVerbs(const QList<QMHDMethod>& verbs);
 
         const QString& path() const;
         void setPath(const QString& path);
 
-        const QMetaObject* controller() const;
-        void setController(const QMetaObject* controller);
+        QMHDController* controller() const;
+        void setController(QMHDController* controller);
 
         const QString& action() const;
         void setAction(const QString& action);

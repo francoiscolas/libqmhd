@@ -13,11 +13,11 @@ class QMHDRoutePrivate
         QMHDRoutePrivate& operator=(const QMHDRoutePrivate& other);
 
     public:
-        QList<QMHDMethod> methods;
+        QList<QMHDMethod> httpVerbs;
         QString path;
         QStringList pathKeys;
         QRegularExpression pathRe;
-        const QMetaObject* controller;
+        QMHDController* controller;
         QString action;
 };
 
@@ -33,7 +33,7 @@ QMHDRoutePrivate::QMHDRoutePrivate(const QMHDRoutePrivate& other)
 
 QMHDRoutePrivate& QMHDRoutePrivate::operator=(const QMHDRoutePrivate& other)
 {
-    methods = other.methods;
+    httpVerbs = other.httpVerbs;
     path = other.path;
     pathKeys = other.pathKeys;
     pathRe = other.pathRe;
@@ -63,7 +63,7 @@ QMHDRoute& QMHDRoute::operator=(const QMHDRoute& route)
     return *this;
 }
 
-bool QMHDRoute::match(const QString& path, QMHDMethod method, QHash<QString,QString>* paramsPtr, bool* pathOkPtr, bool* methodOkPtr) const
+bool QMHDRoute::match(const QString& path, QMHDMethod verb, QHash<QString,QString>* paramsPtr, bool* pathOkPtr, bool* methodOkPtr) const
 {
     QRegularExpressionMatchIterator matchIt;
     QHash<QString,QString>          params;
@@ -82,8 +82,8 @@ bool QMHDRoute::match(const QString& path, QMHDMethod method, QHash<QString,QStr
     }
 
     methodOk = false;
-    if (d->methods.contains(method)
-            || (method == QMHDMethod::HEAD && d->methods.contains(QMHDMethod::GET))) {
+    if (d->httpVerbs.contains(verb)
+            || (verb == QMHDMethod::HEAD && d->httpVerbs.contains(QMHDMethod::GET))) {
         methodOk = true;
     }
 
@@ -99,20 +99,20 @@ bool QMHDRoute::match(const QString& path, QMHDMethod method, QHash<QString,QStr
     return (pathOk && methodOk);
 }
 
-const QList<QMHDMethod>& QMHDRoute::methods() const
+const QList<QMHDMethod>& QMHDRoute::httpVerbs() const
 {
-    return d->methods;
+    return d->httpVerbs;
 }
 
-void QMHDRoute::setMethod(QMHDMethod method)
+void QMHDRoute::setHttpVerbs(QMHDMethod verb)
 {
-    d->methods.clear();
-    d->methods.append(method);
+    d->httpVerbs.clear();
+    d->httpVerbs.append(verb);
 }
 
-void QMHDRoute::setMethods(const QList<QMHDMethod>& methods)
+void QMHDRoute::setHttpVerbs(const QList<QMHDMethod>& verbs)
 {
-    d->methods = methods;
+    d->httpVerbs = verbs;
 }
 
 const QString& QMHDRoute::path() const
@@ -145,12 +145,12 @@ void QMHDRoute::setPath(const QString& path)
     }
 }
 
-const QMetaObject* QMHDRoute::controller() const
+QMHDController* QMHDRoute::controller() const
 {
     return d->controller;
 }
 
-void QMHDRoute::setController(const QMetaObject* controller)
+void QMHDRoute::setController(QMHDController* controller)
 {
     d->controller = controller;
 }

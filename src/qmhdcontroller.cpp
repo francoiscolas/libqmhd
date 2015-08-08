@@ -32,6 +32,11 @@ QMHDController::~QMHDController()
     delete d;
 }
 
+QMHDController* QMHDController::clone(QObject* parent) const
+{
+    return static_cast<QMHDController*>(metaObject()->newInstance(Q_ARG(QObject*, parent)));
+}
+
 QMHDRequest* QMHDController::request() const
 {
     return d->request;

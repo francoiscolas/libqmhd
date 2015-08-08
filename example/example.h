@@ -6,7 +6,10 @@
 class Hello : public QMHDController
 {
     Q_OBJECT
-    QMHDCONTROLLER(Hello)
+
+    public:
+        Q_INVOKABLE
+        Hello(QObject* parent = NULL);
 
     public slots:
         void hello();

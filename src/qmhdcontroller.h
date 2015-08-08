@@ -11,12 +11,6 @@ class QMHDResponse;
 
 class QMHDControllerPrivate;
 
-#define QMHDCONTROLLER(Type)            \
-    public:                             \
-        Q_INVOKABLE                     \
-        Type(QObject* parent = NULL)    \
-            : QMHDController(parent) {} \
-
 class QMHDController : public QObject
 {
     Q_OBJECT
@@ -25,7 +19,12 @@ class QMHDController : public QObject
 
     protected:
         QMHDController(QObject* parent = NULL);
+
+    public:
         virtual ~QMHDController();
+
+    public:
+        virtual QMHDController* clone(QObject* parent = NULL) const;
 
     public:
         QMHDRequest* request() const;

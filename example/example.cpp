@@ -9,8 +9,13 @@
 
 #include "example.h"
 
+Hello::Hello(QObject* parent)
+    : QMHDController(parent)
+{
+}
+
 // GET /hello
-// GET /hello?delay=1000
+// GET /hello?delay=2
 void Hello::hello()
 {
     int delay = request()->query().value("delay").toInt();
@@ -51,7 +56,7 @@ void startRouter()
     QMHDServer* server = new QMHDServer(qApp);
     QMHDRouter* router = new QMHDRouter(qApp);
 
-    router->addRoute("GET", "/hello", &Hello::staticMetaObject, "hello");
+    router->addRoute("GET", "/hello", new Hello(router), SLOT(hello()));
     router->connect(server, &QMHDServer::newRequest,
                     router, &QMHDRouter::processRequest,
                     Qt::DirectConnection);
