@@ -19,8 +19,6 @@ class QMHDServer : public QObject
         bool listen(quint16 port = 80);
         void close();
 
-        quint16	port() const;
-
         int threadPoolSize() const;
         void setThreadPoolSize(int size);
 
