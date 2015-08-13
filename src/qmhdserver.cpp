@@ -130,8 +130,7 @@ bool QMHDServer::listen(quint16 port)
 {
     if (d->mhdDaemon == NULL) {
         d->mhdDaemon = MHD_start_daemon(
-                           MHD_USE_DEBUG
-                           | MHD_USE_POLL_INTERNALLY
+                           MHD_USE_POLL_INTERNALLY
                            | MHD_USE_THREAD_PER_CONNECTION
                            | MHD_USE_PEDANTIC_CHECKS,
                            port,
