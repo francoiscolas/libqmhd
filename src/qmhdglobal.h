@@ -115,6 +115,7 @@ enum class QMHDHttpStatus
 typedef QHash<QString,QString> QStringHash;
 
 QString qmhd_header_date(const QDateTime& dt);
+QString qmhd_json_date(const QDateTime& dt);
 
 #endif // HSGLOBAL_H
 

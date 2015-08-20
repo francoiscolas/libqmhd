@@ -43,3 +43,8 @@ QString qmhd_header_date(const QDateTime& dt)
 {
     return QLocale(QLocale::English).toString(dt.toUTC(), "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
 }
+
+QString qmhd_json_date(const QDateTime& dt)
+{
+    return dt.toUTC().toString(Qt::ISODate);
+}
