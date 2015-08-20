@@ -32,10 +32,10 @@ class QMHDRequestPrivate
         MHD_Connection* const mhdConnection;
         MHD_PostProcessor* mhdBodyProcessor;
         QMHDResponse* response;
-        QMHDMethod method;
+        QMHD::Method method;
         QString path;
         QStringHash query;
-        QMHDHttpVersion httpVersion;
+        QMHD::HttpVersion httpVersion;
         QStringHash headers;
         QMHDBody body;
 };
@@ -80,8 +80,8 @@ QMHDRequestPrivate::QMHDRequestPrivate(MHD_Connection* mhdConnection)
     : mhdConnection(mhdConnection),
       mhdBodyProcessor(NULL),
       response(NULL),
-      method(QMHDMethod::GET),
-      httpVersion(QMHDHttpVersion::Unknown)
+      method(QMHD::GET),
+      httpVersion(QMHD::UnknownVersion)
 {
 }
 
@@ -114,7 +114,7 @@ QMHDRequest::~QMHDRequest()
     delete d;
 }
 
-QMHDMethod QMHDRequest::method() const
+QMHD::Method QMHDRequest::method() const
 {
     return d->method;
 }
@@ -134,7 +134,7 @@ const QStringHash& QMHDRequest::query() const
     return d->query;
 }
 
-QMHDHttpVersion QMHDRequest::httpVersion() const
+QMHD::HttpVersion QMHDRequest::httpVersion() const
 {
     return d->httpVersion;
 }
@@ -164,7 +164,7 @@ quint64 QMHDRequest::parseBody(const char* data, quint64 length)
     return d->parseBody(data, length);
 }
 
-void QMHDRequest::setMethod(QMHDMethod method)
+void QMHDRequest::setMethod(QMHD::Method method)
 {
     d->method = method;
 }
@@ -179,7 +179,7 @@ void QMHDRequest::setQuery(const QStringHash& query)
     d->query = query;
 }
 
-void QMHDRequest::setHttpVersion(QMHDHttpVersion httpVersion)
+void QMHDRequest::setHttpVersion(QMHD::HttpVersion httpVersion)
 {
     d->httpVersion = httpVersion;
 }

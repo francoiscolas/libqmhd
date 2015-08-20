@@ -19,11 +19,11 @@ class QMHDRoute
         QMHDRoute& operator=(const QMHDRoute& route);
 
     public:
-        bool match(const QString& path, QMHDMethod verb, QHash<QString,QString>* params, bool* pathOk, bool* methodOk) const;
+        bool match(const QString& path, QMHD::Method verb, QHash<QString,QString>* params, bool* pathOk, bool* methodOk) const;
 
-        const QList<QMHDMethod>& httpVerbs() const;
-        void setHttpVerbs(QMHDMethod verb);
-        void setHttpVerbs(const QList<QMHDMethod>& verbs);
+        const QList<QMHD::Method>& httpVerbs() const;
+        void setHttpVerbs(QMHD::Method verb);
+        void setHttpVerbs(const QList<QMHD::Method>& verbs);
 
         const QString& path() const;
         void setPath(const QString& path);

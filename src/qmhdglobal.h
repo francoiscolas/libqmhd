@@ -6,7 +6,8 @@
 
 class QDateTime;
 
-/* Request methods taken from http-parser */
+namespace QMHD {
+
 #define QMHD_METHOD_MAP(XX)     \
   XX(DELETE,      DELETE)       \
   XX(GET,         GET)          \
@@ -42,27 +43,7 @@ class QDateTime;
   /* CalDAV */                  \
   XX(MKCALENDAR,  MKCALENDAR)   \
 
-enum class QMHDMethod
-{
-    Unknown = -1,
-#define XX(name, string) name,
-    QMHD_METHOD_MAP(XX)
-#undef XX
-};
-
-QMHDMethod qmhd_method_from_string(const char* method);
-const char* qmhd_method_to_string(QMHDMethod method);
-
-enum class QMHDHttpVersion
-{
-    Unknown  = -1,
-    Http_1_0 = 0x0100,
-    Http_1_1 = 0x0101,
-};
-
-QMHDHttpVersion qmhd_http_version_from_string(const char* http_version);
-
-#define HS_HTTP_STATUS_MAP(XX)                                              \
+#define QMHD_HTTP_STATUS_MAP(XX)                                              \
     XX(100, Continue, Continue)                                             \
     XX(101, SwitchingProtocols, Switching Protocols)                        \
     XX(200, Ok, Ok)                                                         \
@@ -105,14 +86,33 @@ QMHDHttpVersion qmhd_http_version_from_string(const char* http_version);
     XX(504, GatewayTimeout, Gateway Timeout)                                \
     XX(505, HttpVersionNotSupported, HTTP Version Not Supported)            \
 
-enum class QMHDHttpStatus
-{
-#define XX(num, name, string) name = num,
-    HS_HTTP_STATUS_MAP(XX)
+    enum Method {
+        UnknownMethod = -1,
+#define XX(name, string) name,
+        QMHD_METHOD_MAP(XX)
 #undef XX
-};
+    };
+
+    enum HttpVersion {
+        UnknownVersion = -1,
+        Http_1_0 = 0x0100,
+        Http_1_1 = 0x0101,
+    };
+
+    enum HttpStatus {
+#define XX(num, name, string) name = num,
+        QMHD_HTTP_STATUS_MAP(XX)
+#undef XX
+    };
+
+} // namespace QMHD
 
 typedef QHash<QString,QString> QStringHash;
+
+QMHD::Method qmhd_method_from_string(const char* method);
+const char* qmhd_method_to_string(QMHD::Method method);
+
+QMHD::HttpVersion qmhd_http_version_from_string(const char* http_version);
 
 QString qmhd_header_date(const QDateTime& dt);
 QString qmhd_json_date(const QDateTime& dt);

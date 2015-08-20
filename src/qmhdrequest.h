@@ -22,11 +22,11 @@ class QMHDRequest : public QObject
         virtual ~QMHDRequest();
 
     public:
-        QMHDMethod method() const;
+        QMHD::Method method() const;
         QString methodString() const;
         const QString& path() const;
         const QStringHash& query() const;
-        QMHDHttpVersion httpVersion() const;
+        QMHD::HttpVersion httpVersion() const;
         QString header(const QString& name) const;
         const QStringHash& headers() const;
         const QMHDBody& body() const;
@@ -34,10 +34,10 @@ class QMHDRequest : public QObject
 
     private:
         quint64 parseBody(const char* data, quint64 length);
-        void setMethod(QMHDMethod method);
+        void setMethod(QMHD::Method method);
         void setPath(const QString& path);
         void setQuery(const QStringHash& query);
-        void setHttpVersion(QMHDHttpVersion httpVersion);
+        void setHttpVersion(QMHD::HttpVersion httpVersion);
         void setHeader(const QString& name, const QString& value);
         void setHeaders(const QStringHash& headers);
         void setResponse(QMHDResponse* response);

@@ -25,7 +25,7 @@ class QMHDResponsePrivate
 
     public:
         MHD_Connection* mhdConnection;
-        QMHDHttpStatus status;
+        QMHD::HttpStatus status;
         QStringHash headers;
         QByteArray body;
         int bodyFileDescriptor;
@@ -36,7 +36,7 @@ class QMHDResponsePrivate
 
 QMHDResponsePrivate::QMHDResponsePrivate()
     : mhdConnection(NULL),
-      status(QMHDHttpStatus::Ok),
+      status(QMHD::Ok),
       bodyFileDescriptor(-1),
       bodyFileOffset(0),
       bodyFileSize(0),
@@ -112,12 +112,12 @@ void QMHDResponse::send()
     }
 }
 
-QMHDHttpStatus QMHDResponse::status() const
+QMHD::HttpStatus QMHDResponse::status() const
 {
     return d->status;
 }
 
-void QMHDResponse::setStatus(QMHDHttpStatus status)
+void QMHDResponse::setStatus(QMHD::HttpStatus status)
 {
     if (d->sent == false) {
         d->status = status;

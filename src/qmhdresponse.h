@@ -29,8 +29,8 @@ class QMHDResponse : public QObject
         void send(int fileDescriptor, off_t fileOffset, size_t fileSize);
         void send();
 
-        QMHDHttpStatus status() const;
-        void setStatus(QMHDHttpStatus status);
+        QMHD::HttpStatus status() const;
+        void setStatus(QMHD::HttpStatus status);
 
         QString header(const QString& name) const;
         void setHeader(const QString& name, const QString& value);

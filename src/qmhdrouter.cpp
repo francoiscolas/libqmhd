@@ -9,14 +9,14 @@
 #include "qmhdrequest.h"
 #include "qmhdresponse.h"
 
-static QList<QMHDMethod> http_verbs_from_string(const QString& method)
+static QList<QMHD::Method> http_verbs_from_string(const QString& method)
 {
-    QList<QMHDMethod> methods;
+    QList<QMHD::Method> methods;
 
     foreach (QString string, method.split(',')) {
-        QMHDMethod method = qmhd_method_from_string(string.toLocal8Bit().constData());
+        QMHD::Method method = qmhd_method_from_string(string.toLocal8Bit().constData());
 
-        if (method != QMHDMethod::Unknown)
+        if (method != QMHD::UnknownMethod)
             methods.append(method);
     }
     return methods;
@@ -65,7 +65,7 @@ void QMHDRouterPrivate::processAction(const QMHDRoute& route, QMHDRequest* reque
     }
 
 error:
-    request->response()->setStatus(QMHDHttpStatus::InternalServerError);
+    request->response()->setStatus(QMHD::InternalServerError);
     request->response()->send();
 }
 
@@ -104,11 +104,11 @@ void QMHDRouter::processRequest(QMHDRequest* request)
 
     if (found) {
         if (!processed) {
-            request->response()->setStatus(QMHDHttpStatus::MethodNotAllowed);
+            request->response()->setStatus(QMHD::MethodNotAllowed);
             request->response()->send();
         }
     } else {
-        request->response()->setStatus(QMHDHttpStatus::NotFound);
+        request->response()->setStatus(QMHD::NotFound);
         request->response()->send();
     }
     qDebug("%s %s -> %d (found=%d processed=%d)",

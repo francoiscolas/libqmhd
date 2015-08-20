@@ -13,7 +13,7 @@ class QMHDRoutePrivate
         QMHDRoutePrivate& operator=(const QMHDRoutePrivate& other);
 
     public:
-        QList<QMHDMethod> httpVerbs;
+        QList<QMHD::Method> httpVerbs;
         QString path;
         QStringList pathKeys;
         QRegularExpression pathRe;
@@ -63,7 +63,7 @@ QMHDRoute& QMHDRoute::operator=(const QMHDRoute& route)
     return *this;
 }
 
-bool QMHDRoute::match(const QString& path, QMHDMethod verb, QHash<QString,QString>* paramsPtr, bool* pathOkPtr, bool* methodOkPtr) const
+bool QMHDRoute::match(const QString& path, QMHD::Method verb, QHash<QString,QString>* paramsPtr, bool* pathOkPtr, bool* methodOkPtr) const
 {
     QRegularExpressionMatchIterator matchIt;
     QHash<QString,QString>          params;
@@ -83,7 +83,7 @@ bool QMHDRoute::match(const QString& path, QMHDMethod verb, QHash<QString,QStrin
 
     methodOk = false;
     if (d->httpVerbs.contains(verb)
-            || (verb == QMHDMethod::HEAD && d->httpVerbs.contains(QMHDMethod::GET))) {
+            || (verb == QMHD::HEAD && d->httpVerbs.contains(QMHD::GET))) {
         methodOk = true;
     }
 
@@ -99,18 +99,18 @@ bool QMHDRoute::match(const QString& path, QMHDMethod verb, QHash<QString,QStrin
     return (pathOk && methodOk);
 }
 
-const QList<QMHDMethod>& QMHDRoute::httpVerbs() const
+const QList<QMHD::Method>& QMHDRoute::httpVerbs() const
 {
     return d->httpVerbs;
 }
 
-void QMHDRoute::setHttpVerbs(QMHDMethod verb)
+void QMHDRoute::setHttpVerbs(QMHD::Method verb)
 {
     d->httpVerbs.clear();
     d->httpVerbs.append(verb);
 }
 
-void QMHDRoute::setHttpVerbs(const QList<QMHDMethod>& verbs)
+void QMHDRoute::setHttpVerbs(const QList<QMHD::Method>& verbs)
 {
     d->httpVerbs = verbs;
 }
