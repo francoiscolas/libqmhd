@@ -4,6 +4,8 @@
 #include <QHash>
 #include <QString>
 
+class QDateTime;
+
 /* Request methods taken from http-parser */
 #define QMHD_METHOD_MAP(XX)     \
   XX(DELETE,      DELETE)       \
@@ -111,6 +113,8 @@ enum class QMHDHttpStatus
 };
 
 typedef QHash<QString,QString> QStringHash;
+
+QString qmhd_header_date(const QDateTime& dt);
 
 #endif // HSGLOBAL_H
 

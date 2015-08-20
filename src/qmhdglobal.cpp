@@ -1,5 +1,8 @@
 #include "qmhdglobal.h"
 
+#include <QDateTime>
+#include <QLocale>
+
 static const char* s_method_strings[] = {
 #define XX(name, string) #string,
     QMHD_METHOD_MAP(XX)
@@ -34,4 +37,9 @@ QMHDHttpVersion qmhd_http_version_from_string(const char* http_version)
     if (qstrcmp("HTTP/1.1", http_version) == 0)
         return QMHDHttpVersion::Http_1_1;
     return QMHDHttpVersion::Unknown;
+}
+
+QString qmhd_header_date(const QDateTime& dt)
+{
+    return QLocale(QLocale::English).toString(dt.toUTC(), "ddd, dd MMM yyyy hh:mm:ss 'GMT'");
 }
