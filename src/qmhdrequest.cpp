@@ -47,14 +47,14 @@ int QMHDRequestPrivate::bodyIterator(void* dRequestPtr,
                                      const char* contentType,
                                      const char* /*transfer_encoding*/,
                                      const char* data,
-                                     uint64_t dataOffset,
+                                     uint64_t /*dataOffset*/,
                                      size_t dataSize)
 {
     QMHDRequestPrivate* request = static_cast<QMHDRequestPrivate*>(dRequestPtr);
     QMHDBody*           body    = &(request->body);
 
     if (filename == NULL) {
-        body->setParam(key, QByteArray::fromRawData(data + dataOffset, dataSize));
+        body->setParam(key, QByteArray::fromRawData(data, dataSize));
     } else {
         QMHDBodyFile* upload = body->file(filename);
         int           n;
@@ -64,12 +64,11 @@ int QMHDRequestPrivate::bodyIterator(void* dRequestPtr,
             body->setFile(filename, upload);
         }
         while (dataSize > 0) {
-            n = upload->file()->write(data + dataOffset, dataSize);
+            n = upload->file()->write(data, dataSize);
             if (n < 0)
                 return MHD_NO;
             if (!upload->file()->flush())
                 return MHD_NO;
-            dataOffset += n;
             dataSize   -= n;
         }
     }
@@ -93,7 +92,7 @@ QMHDRequestPrivate::~QMHDRequestPrivate()
 quint64 QMHDRequestPrivate::parseBody(const char* data, quint64 length)
 {
     if (mhdBodyProcessor == NULL) {
-        mhdBodyProcessor = MHD_create_post_processor(mhdConnection, 1024, &QMHDRequestPrivate::bodyIterator, this);
+        mhdBodyProcessor = MHD_create_post_processor(mhdConnection, 65536, &QMHDRequestPrivate::bodyIterator, this);
         if (mhdBodyProcessor == NULL)
             return -1;
     }
