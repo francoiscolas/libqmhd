@@ -56,20 +56,22 @@ int QMHDRequestPrivate::bodyIterator(void* dRequestPtr,
     if (filename == NULL) {
         body->setParam(key, QByteArray::fromRawData(data, dataSize));
     } else {
-        QMHDBodyFile* upload = body->file(filename);
-        int           n;
+        QMHDBodyFile* upload = body->file(key);
+        int           o      = 0;
+        int           n      = 0;
 
         if (upload == NULL) {
             upload = new QMHDBodyFile(filename, contentType);
-            body->setFile(filename, upload);
+            body->setFile(key, upload);
         }
         while (dataSize > 0) {
-            n = upload->file()->write(data, dataSize);
+            n = upload->file()->write(data + o, dataSize);
             if (n < 0)
                 return MHD_NO;
             if (!upload->file()->flush())
                 return MHD_NO;
             dataSize   -= n;
+            o          += n;
         }
     }
     return MHD_YES;
