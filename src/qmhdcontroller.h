@@ -30,6 +30,7 @@ class QMHDController : public QObject
         QMHDRequest* request() const;
         QMHDResponse* response() const;
 
+        QString param(const QString& name) const;
         QStringHash params() const;
         const QStringHash& pathParams() const;
         const QStringHash& queryParams() const;

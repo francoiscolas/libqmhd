@@ -47,6 +47,11 @@ QMHDResponse* QMHDController::response() const
     return d->request->response();
 }
 
+QString QMHDController::param(const QString& name) const
+{
+    return params().value(name);
+}
+
 QStringHash QMHDController::params() const
 {
     return QStringHash()
