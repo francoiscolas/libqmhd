@@ -6,9 +6,12 @@
 #include "qmhdglobal.h"
 
 class QFileDevice;
+class QIODevice;
 class QJsonDocument;
 
 class QMHDResponsePrivate;
+
+#define DEFAULT_DEVICE_BLOCK_SIZE 1024
 
 class QMHDResponse : public QObject
 {
@@ -25,6 +28,8 @@ class QMHDResponse : public QObject
     public:
         void send(const QByteArray& buffer);
         void send(const QJsonDocument& json);
+        void send(QIODevice* device,
+                  size_t blockSize=DEFAULT_DEVICE_BLOCK_SIZE);
         void send(int fileDescriptor, size_t fileSize);
         void send(int fileDescriptor, off_t fileOffset, size_t fileSize);
         void send();
