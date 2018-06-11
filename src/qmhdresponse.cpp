@@ -1,5 +1,6 @@
 #include "qmhdresponse.h"
 
+#include <QIODevice>
 #include <QJsonDocument>
 #include <QRegularExpression>
 
@@ -18,6 +19,19 @@ static QString to_header_case(const QString& headerName)
     return result;
 }
 
+static ssize_t device_content_reader_callback(void* dDevicePtr, uint64_t pos,
+                                              char *buf, size_t max)
+{
+    QIODevice* device = static_cast<QIODevice*>(dDevicePtr);
+    device->seek(pos);
+    return device->read(buf, max);
+}
+
+static void device_content_reader_free_callback(void* /*dDevicePtr*/)
+{
+
+}
+
 class QMHDResponsePrivate
 {
     public:
@@ -28,6 +42,8 @@ class QMHDResponsePrivate
         QMHD::HttpStatus status;
         QStringHash headers;
         QByteArray body;
+        QIODevice* device;
+        size_t blockSize;
         int bodyFileDescriptor;
         off_t bodyFileOffset;
         size_t bodyFileSize;
@@ -37,6 +53,8 @@ class QMHDResponsePrivate
 QMHDResponsePrivate::QMHDResponsePrivate()
     : mhdConnection(NULL),
       status(QMHD::Ok),
+      device(0),
+      blockSize(DEFAULT_DEVICE_BLOCK_SIZE),
       bodyFileDescriptor(-1),
       bodyFileOffset(0),
       bodyFileSize(0),
@@ -60,6 +78,16 @@ void QMHDResponse::send(const QByteArray& buffer)
 {
     if (d->sent == false) {
         d->body.append(buffer);
+        send();
+    }
+}
+
+void QMHDResponse::send(QIODevice* device, size_t blockSize)
+{
+    if (d->sent == false)
+    {
+        d->device = device;
+        d->blockSize = blockSize;
         send();
     }
 }
@@ -93,7 +121,14 @@ void QMHDResponse::send()
     MHD_Response* response;
 
     if (d->sent == false) {
-        if (d->bodyFileDescriptor >= 0) {
+        if (d->device) {
+            response = MHD_create_response_from_callback(
+                        d->device->size(),
+                        d->blockSize,
+                        &device_content_reader_callback,
+                        d->device,
+                        &device_content_reader_free_callback);
+        } else if (d->bodyFileDescriptor >= 0) {
             response = MHD_create_response_from_fd_at_offset(d->bodyFileSize, d->bodyFileDescriptor, d->bodyFileOffset);
         } else {
             response = MHD_create_response_from_buffer(d->body.size(), (void*) d->body.constData(), MHD_RESPMEM_PERSISTENT);
